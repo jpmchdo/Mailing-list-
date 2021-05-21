@@ -4,13 +4,15 @@ npm init
 //installations
 npm install express -- save 
 npm install mysql -- save 
+npm install faker -- save 
 npm install ejs -- save 
 npm install body-parser -- save 
 
 //load package
-var express = require('express') //web development package (contains HTML and CSS connection packages)
-var mysql = require('mysql') //NodeJS and MySQL connection package
-var bodyParser = require('body-parser') //web development package (useful for post requests)
+var express = require('express'); //web development package (contains HTML and CSS connection packages)
+var mysql = require('mysql'); //NodeJS and MySQL connection package
+var bodyParser = require('body-parser'); //web development package (useful for post requests)
+var faker = require('faker');
 
 //Configure packages  
 var app = express();
@@ -24,6 +26,24 @@ var connection = mysql.createConnection ({
 	user: 'root',
 	database: 'mailing'
 });
+
+//Data insertion in database 
+var data = [];
+
+for(var i = 0; i < 500; i++){
+	data.push([
+		faker.internet.email(),
+		faker.date.past()
+	]);	
+}
+var q = 'INSERT INTO users (email, created_at) VALUES ?';
+
+connection.query(q, [data], function(error, result) {
+	console.log(error);
+	console.log(result);
+});
+
+connection.end();
 
 //Run server 
 app.listen(3000, function() {
